@@ -1,0 +1,17 @@
+FROM alpine:3.17.1
+
+ARG KUBECTL_VERSION=1.17.5
+
+RUN apk update \
+    && apk add --no-cache bash curl nmap-ncat terraform aws-cli git \
+    && rm -rf /var/cache/apk/* /tmp/* /sbin/halt /sbin/poweroff /sbin/reboot
+
+RUN curl -sL -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl &&\
+    chmod +x /usr/bin/kubectl
+
+RUN adduser -s /bin/bash -u 1000 -D -h /home/nonrootuser nonrootuser nonrootuser
+
+SHELL ["/bin/bash", "-c"]
+
+ENV PATH=$PATH:/home/nonrootuser/.local/bin 
+USER nonrootuser
